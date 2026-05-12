@@ -1,32 +1,33 @@
-# 🔌 Fintech API Testing - Postman Portfolio Project
+# 🔌 API Testing Portfolio - Postman & Newman
 
-> API test collection simulating core banking scenarios - Auth, User Account, Fund Transfer, and Loan Application.
-> Built with Postman · JavaScript test scripts · No API key required
+> REST API test collection covering full booking lifecycle - Auth, Create, Read, Update, Delete, and Filter.
+> Built with Postman · JavaScript test scripts · No API key required · All tests pass ✅
 
 ---
 
-## 📌 What This Project Tests
+## 📌 About This Project
 
-This collection covers 4 main flows that are common in any banking or fintech API:
+This project demonstrates my API testing skills using **restful-booker.herokuapp.com** - a public REST API built specifically for testing practice by QA engineer Mark Winteringham.
 
-- **Auth** - login with valid and invalid credentials, JWT token validation
-- **User Account** - fetch account details, handle non-existent accounts
-- **Fund Transfer** - create transfer, verify it was saved, test invalid IDs
-- **Loan Application** - submit loan, test missing fields, test unauthorized access
+It covers the full lifecycle of a record from creation to deletion, with authentication required at every sensitive step.
 
-The base URL is **dummyjson.com** - a free public REST API that supports real JWT authentication. No API key needed, no account required.
+**What I was testing for:**
+- Does auth actually protect update and delete operations?
+- Is the data saved correctly after a create?
+- Does the API handle invalid input cleanly - no crashes, correct error codes?
+- After a delete, is the record actually gone?
 
-The test logic (status codes, response fields, negative cases, security checks) reflects what I tested professionally at Yoma Bank across mobile banking and loan origination systems.
+These are the same questions I ask when testing any system, whether it's a hotel booking API or an enterprise application.
 
 ---
 
 ## 📁 Folder Structure
 
 ```
-fintech-api-testing/
+api-testing-portfolio/
 │
 ├── collections/
-│   └── fintech_banking_api_v2.json   ← import this into Postman
+│   └── api_testing_portfolio.json    ← import this into Postman
 │
 ├── reports/
 │   └── postman-run-results.png       ← screenshot of actual test run
@@ -38,67 +39,60 @@ fintech-api-testing/
 
 ## ⚙️ How To Run
 
-### Option 1 - Postman (manual)
+### Option 1 - Postman
 
 1. Open Postman
 2. Click **Import**
-3. Choose `collections/fintech_banking_api_v2.json`
+3. Choose `collections/api_testing_portfolio.json`
 4. Click **Run collection**
 
-No environment setup needed - the collection handles token automatically.
+Run requests in order - the auth token and booking ID are saved automatically between requests.
 
 ---
 
 ### Option 2 - Newman (command line)
 
-Install Newman:
 ```
-npm install -g newman
-npm install -g newman-reporter-htmlextra
-```
+npm install -g newman newman-reporter-htmlextra
 
-Run the collection:
+newman run collections/api_testing_portfolio.json \
+  -r htmlextra \
+  --reporter-htmlextra-export reports/newman-report.html
 ```
-newman run collections/fintech_banking_api_v2.json -r htmlextra --reporter-htmlextra-export reports/newman-report.html
-```
-
-Then open `reports/newman-report.html` in your browser.
 
 ---
 
 ## 🧪 Test Cases Summary
 
-| # | Folder | Test Name | Type |
-|---|--------|-----------|------|
-| 1 | Auth | Login with valid credentials | Positive |
-| 2 | Auth | Login with wrong password | Negative |
-| 3 | Auth | Login with empty username | Negative |
-| 4 | Auth | Verify token - get current user | Positive |
-| 5 | Auth | Verify token - invalid token | Security |
-| 6 | User Account | Get account details | Positive |
-| 7 | User Account | Get account - invalid user ID | Negative |
-| 8 | Fund Transfer | Create successful transfer | Positive |
-| 9 | Fund Transfer | Get transaction by ID | Positive |
-| 10 | Fund Transfer | Invalid transaction ID | Negative |
-| 11 | Loan Application | Submit valid application | Positive |
-| 12 | Loan Application | Missing required field | Negative |
-| 13 | Loan Application | Unauthorized - no token | Security |
+| # | Test Name | Type | Expected Result |
+|---|-----------|------|----------------|
+| 1 | Create Token - Valid Credentials | Positive | 200 + token |
+| 2 | Create Token - Wrong Password | Negative | 200 + Bad credentials, no token |
+| 3 | Get All Bookings | Positive | 200 + non-empty array |
+| 4 | Create New Booking | Positive | 200 + booking ID + correct data |
+| 5 | Get Booking by ID | Positive | 200 + saved data matches |
+| 6 | Update Booking - With Auth | Positive | 200 + updated data |
+| 7 | Update Booking - Without Auth | Security | 403 Forbidden |
+| 8 | Get Booking - Non-Existent ID | Negative | 404 Not Found |
+| 9 | Filter Bookings by Name | Positive | 200 + filtered results |
+| 10 | Delete Booking - With Auth | Positive | 201 Deleted |
+| 11 | Verify Booking Deleted | Negative | 404 - record gone |
 
 ---
 
-## 🧠 What I Focused On
+## 🧠 Testing Approach
 
-**Negative and security cases are the priority.**
-In banking, the happy path usually works fine out of the box. What breaks things is edge cases - expired tokens, missing required fields, accessing resources that don't exist. That's where I spent most of my testing time at Yoma Bank, and I followed the same mindset here.
+**Full lifecycle - not just happy path.**
+I test create, read, update, delete, and then verify the delete actually worked. A lot of bugs hide in the last step - systems that say "Deleted" but still return the record on a GET request.
 
-**Token flow is automatic.**
-The login request saves the JWT token as a collection variable. All subsequent requests pick it up automatically - no manual copy-paste needed between requests.
+**Auth checks on every sensitive operation.**
+I always test what happens when auth is missing or wrong. The update-without-auth test catches a common developer mistake - forgetting to protect PUT and DELETE endpoints.
 
-**Every request has test scripts.**
-Not just status code checks - I also verify response body fields, data types, and that no sensitive data leaks on failed requests.
+**Post-action verification.**
+After creating a record, I fetch it and compare the response to what I submitted. After deleting, I GET it again to confirm it's gone. The API response alone is not enough evidence.
 
-**Production behavior is documented.**
-For cases where the mock API behaves differently from a real banking API, I added `[Expected in production]` comments in the test scripts. This shows I understand real-world requirements, not just what the mock returns.
+**Clean negative cases.**
+Wrong credentials, non-existent IDs - these must return proper error codes and not crash the server. A 500 on bad input is always a bug.
 
 ---
 
@@ -108,24 +102,24 @@ For cases where the mock API behaves differently from a real banking API, I adde
 |------|---------|
 | Postman | Build and run API tests |
 | Newman | Run collection from command line |
-| newman-reporter-htmlextra | Generate HTML report |
-| dummyjson.com | Free public REST API with real JWT auth |
+| newman-reporter-htmlextra | Generate HTML test report |
+| restful-booker.herokuapp.com | Public REST API for testing practice |
 | JavaScript | Test scripts inside Postman |
 
 ---
 
-## 🔗 Related Projects
+## 🔗 Other Projects
 
 | Project | Link |
 |---------|------|
 | UI Automation (Robot Framework) | [OrangeHRM_Automation](https://github.com/hwilltester/OrangeHRM_Automation) |
 | Banking UAT Test Cases + RTM | [banking-uat-portfolio](https://github.com/hwilltester/banking-uat-portfolio) |
-| Banking SQL Test Scripts | [banking-sql-scripts](https://github.com/hwilltester/banking-sql-scripts) |
+| SQL Test Scripts | [banking-sql-scripts](https://github.com/hwilltester/banking-sql-scripts) |
 
 ---
 
 ## 🙋 Author
 
-**Htuu Will Oo** - QA Engineer with 7+ years in banking and fintech
+**Will**
 
 [GitHub](https://github.com/hwilltester) · [LinkedIn](https://linkedin.com/in/htuuwill)
