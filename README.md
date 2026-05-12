@@ -60,6 +60,10 @@ newman run collections/api_testing_portfolio.json \
   --reporter-htmlextra-export reports/newman-report.html
 ```
 
+## 📸 Test Run Results
+
+![Postman Run Results](reports/)
+
 ---
 
 ## 🧪 Test Cases Summary
