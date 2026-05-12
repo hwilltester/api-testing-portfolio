@@ -62,7 +62,11 @@ newman run collections/api_testing_portfolio.json \
 
 ## 📸 Test Run Results
 
-![Postman Run Results](reports/)
+**39 / 39 Tests Passed ✅**
+
+![Run Results 1](reports/postman-run-results-1.png)
+![Run Results 2](reports/postman-run-results-2.png)
+![Run Results 3](reports/postman-run-results-3.png)
 
 ---
 
