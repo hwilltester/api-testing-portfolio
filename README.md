@@ -128,6 +128,6 @@ Wrong credentials, non-existent IDs - these must return proper error codes and n
 
 ## 🙋 Author
 
-**Will**
+**Htuu Will Oo**
 
 [GitHub](https://github.com/hwilltester) · [LinkedIn](https://linkedin.com/in/htuuwill)
