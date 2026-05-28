@@ -116,16 +116,6 @@ Wrong credentials, non-existent IDs - these must return proper error codes and n
 
 ---
 
-## 🔗 Other Projects
-
-| Project | Link |
-|---------|------|
-| UI Automation (Robot Framework) | [OrangeHRM_Automation](https://github.com/hwilltester/OrangeHRM_Automation) |
-| Banking UAT Test Cases + RTM | [banking-uat-portfolio](https://github.com/hwilltester/banking-uat-portfolio) |
-| SQL Test Scripts | [banking-sql-scripts](https://github.com/hwilltester/banking-sql-scripts) |
-
----
-
 ## 🙋 Author
 
 **Htuu Will Oo**
